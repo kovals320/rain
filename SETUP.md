@@ -10,13 +10,13 @@ A record of the `rain.kneapps.fyi` project, so a new conversation (or a new pers
 `משקעים ניר אליהו`: a public, read-only site showing rainfall for Kibbutz Nir Eliyahu (Hebrew, right-to-left, mobile-first).
 Anyone with the link can view; only the admin (`/login`, no sign-up) can change anything. Hidden from search engines.
 
-**Status (2026-10-18):** first version built. Five public tabs and an admin page:
+**Status (2026-10-18):** first version built. Four public tabs (charts turned off for now) and an admin page:
 
 | Tab | Route | What it shows |
 |---|---|---|
 | עמוד ראשי | `/` | Top (blue) section first: last measurement (and the rain spell it ends), season total so far, progress toward an average season with today's average marked, and comparisons with last season and the average **up to the same date**. Below: season average, last season, records, latest reports |
 | אודות | `/about` | The story of the station and of Baruch Reuveni (text from Dor, verbatim); in `src/app/about/page.tsx` |
-| גרפים | `/charts` | Seven charts, with an index at the top: season totals with a 5-season moving average; long-term trend (dots + linear trend, mm per decade, r²); decades (average + driest–wettest range); running total through the season; average per month; compare up to 3 seasons month by month (client component); heatmap of monthly rain (fixed colour bins) |
+| גרפים (turned off) | was `/charts`; code kept in `src/app/_charts` (an `_` folder is not routed). To bring it back: rename the folder to `charts` and add the tab to `TABS` in `src/components/Header.tsx` | Seven charts, with an index at the top: season totals with a 5-season moving average; long-term trend (dots + linear trend, mm per decade, r²); decades (average + driest–wettest range); running total through the season; average per month; compare up to 3 seasons month by month (client component); heatmap of monthly rain (fixed colour bins) |
 | נתונים חודשיים | `/monthly` | Table: seasons × months (Jun–Aug, Sep … May) + total, average row, shaded cells |
 | נתונים יומיים | `/daily?season=2025` | Every rain day of a chosen season, by month, with bars and running total |
 | עדכון נתונים (admin) | `/admin` | Add/replace a day's reading (date + mm, 0 allowed), delete recent ones |

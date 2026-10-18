@@ -14,7 +14,7 @@ export function DropIcon({ className = "h-8 w-8" }: { className?: string }) {
 export const TABS = [
   { href: "/", label: "עמוד ראשי" },
   { href: "/about", label: "אודות" },
-  { href: "/charts", label: "גרפים" },
+  // The charts tab is turned off for now; its page is kept in src/app/_charts (not routed) for later.
   { href: "/monthly", label: "נתונים חודשיים" },
   { href: "/daily", label: "נתונים יומיים" },
 ];
@@ -48,7 +48,7 @@ export async function Header({ active }: { active?: string }) {
           )}
         </div>
 
-        <nav aria-label="ניווט" className="mt-4 flex flex-wrap gap-2">
+        <nav aria-label="ניווט" className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-4 sm:gap-3">
           {TABS.map((t) => {
             const on = t.href === active;
             return (
@@ -56,11 +56,9 @@ export async function Header({ active }: { active?: string }) {
                 key={t.href}
                 href={t.href}
                 aria-current={on ? "page" : undefined}
-                className={
-                  on
-                    ? "rounded-xl bg-rain px-4 py-2.5 font-medium text-white shadow-sm sm:px-5"
-                    : "rounded-xl bg-sky px-4 py-2.5 font-medium text-ink transition-colors hover:bg-line sm:px-5"
-                }
+                className={`rounded-2xl px-3 py-3.5 text-center text-lg font-semibold transition-colors sm:py-4 ${
+                  on ? "bg-rain text-white shadow-sm" : "bg-sky text-ink hover:bg-line"
+                }`}
               >
                 {t.label}
               </Link>
