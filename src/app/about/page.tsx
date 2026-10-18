@@ -17,8 +17,8 @@ export default function AboutPage() {
           className="h-auto w-full"
         />
         <div className="px-5 py-5">
-        <h1 className="text-2xl font-bold">אודות</h1>
-        <div className="mt-3 space-y-4 text-lg leading-relaxed">
+        <h1 className="sr-only">אודות</h1>
+        <div className="space-y-4 text-lg leading-relaxed">
           <p>
             בשנים 1968–2021, יותר מחמישים שנה, מדד ברוך ראובני את כמות המשקעים בתחנה המטאורולוגית בניר אליהו. המדידות כללו גם
             התאדות יומית. על סמך הנתונים שאסף ברוך, השקו החקלאים את השדות והמטעים.
