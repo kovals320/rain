@@ -55,6 +55,12 @@ Schema in `supabase/migrations/rain_initial.sql` (applied as migration `rain_ini
 change only via SQL) and the functions `rain_is_member()` / `rain_is_admin()` for policies on future tables.
 Admin: `dor@kne.org.il` (same Supabase user as the other apps).
 
+`rain_daily` (`supabase/migrations/rain_daily.sql`): `date` (primary key) and `rainfall_mm` (numeric 5,1), one row per day with
+rain; days without a row had no rain. Public read, admin write.
+Imported 2026-10-18 from `KneRainDaily_export.csv` (columns `date`, `rainfall` only): 2,820 days, 1976-10-23 to 2026-04-01,
+total 29,295.7 mm, max 137.0 mm on 2018-12-06. Verified with an md5 over all rows (identical to the file).
+Note: no rows between 2024-05-04 and 2025-01-10, so season 2024/25 is missing its autumn (only 157.5 mm recorded).
+
 Auth: `https://rain.kneapps.fyi/**` in Authentication → URL Configuration → Redirect URLs. Never change the Site URL (shared project).
 
 New tables: prefix `rain_`, RLS on, public read (`to anon, authenticated using (true)`) and write only for
@@ -83,3 +89,4 @@ New tables: prefix `rain_`, RLS on, public read (`to anon, authenticated using (
 3. Vercel project `rain` (team Apps), 2 env vars (section 3), no Supabase integration.
 4. Domain `rain.kneapps.fyi`: added in Vercel, CNAME `rain` in Cloudflare (DNS only).
 5. Checked: `/api/health` ok, home page, admin login works.
+6. `rain_daily` created and filled with the daily history (section 4).
