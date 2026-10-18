@@ -79,4 +79,7 @@ New tables: prefix `rain_`, RLS on, public read (`to anon, authenticated using (
 ## 7. Setup log
 
 1. 2026-10-18: repo `kovals320/rain` created empty; starter shell written (shell code from `kmedia`, new design), pushed.
-2. Supabase migration `rain_initial` applied.
+2. Supabase migration `rain_initial` applied. Redirect URL `https://rain.kneapps.fyi/**` added.
+3. Vercel project `rain` (team Apps), 2 env vars (section 3), no Supabase integration.
+4. Domain `rain.kneapps.fyi`: added in Vercel, CNAME `rain` in Cloudflare (DNS only).
+5. Checked: `/api/health` ok, home page, admin login works.
