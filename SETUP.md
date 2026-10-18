@@ -13,6 +13,14 @@ Anyone with the link can view; only the admin (`/login`, no sign-up) can change 
 **Status (2026-10-18):** infrastructure only. Home page with placeholder cards, admin login, empty admin page, `/api/health`.
 The data, pages (monthly, daily, charts, about) and admin tools will be decided later.
 
+**Rain season = September to May.** Rain from September 2025 to May 2026 is season `25/26` (and so on, back to `76/77`).
+
+Open questions (Dor is checking):
+- June–August rain: 8 days, 21.5 mm in total (1979-08-16 1.9, 1992-06-16 3.4, 1992-06-17 1.1, 1993-06-07 0.9,
+  1999-06-26 0.2, 2011-08-30 0.2, 2011-08-31 0.2, 2018-06-12 13.6). Leave out of season totals, add to the season
+  that ended, or add to the next one?
+- No reports between 2024-05-04 and 2025-01-10 (autumn of 24/25 missing?).
+
 Stack: Next.js 16 (App Router, TypeScript), Tailwind v4, `@supabase/ssr`, font Rubik.
 
 **Design** (own look, different from the media sites): pale sky-to-aqua gradient background, white cards with a thin border,
