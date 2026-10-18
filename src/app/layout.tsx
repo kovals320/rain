@@ -8,6 +8,9 @@ const rubik = Rubik({
   display: "swap",
 });
 
+// Pages show who is signed in (admin links), so render per request; the rain data itself is cached (src/lib/rain.ts).
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "משקעים ניר אליהו",
   description: "נתוני הגשם של קיבוץ ניר אליהו",

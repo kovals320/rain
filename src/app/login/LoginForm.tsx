@@ -35,7 +35,7 @@ export function LoginForm({ linkError }: { linkError: boolean }) {
         setBusy(false);
         return;
       }
-      router.replace("/");
+      router.replace("/admin");
       router.refresh();
       return;
     }

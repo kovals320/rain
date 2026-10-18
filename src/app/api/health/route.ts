@@ -9,8 +9,8 @@ async function checkSupabase() {
   try {
     const auth = await fetch(`${url}/auth/v1/health`, { headers: { apikey: key }, cache: "no-store" });
     if (!auth.ok) return `auth status ${auth.status}`;
-    // Confirms the rain_ tables exist (the members table is locked, so expect an empty list).
-    const db = await fetch(`${url}/rest/v1/rain_members?select=email&limit=1`, {
+    // Confirms the rain data table can be read.
+    const db = await fetch(`${url}/rest/v1/rain_daily?select=date&limit=1`, {
       headers: { apikey: key },
       cache: "no-store",
     });

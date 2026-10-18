@@ -10,8 +10,26 @@ A record of the `rain.kneapps.fyi` project, so a new conversation (or a new pers
 `משקעים ניר אליהו`: a public, read-only site showing rainfall for Kibbutz Nir Eliyahu (Hebrew, right-to-left, mobile-first).
 Anyone with the link can view; only the admin (`/login`, no sign-up) can change anything. Hidden from search engines.
 
-**Status (2026-10-18):** infrastructure only. Home page with placeholder cards, admin login, empty admin page, `/api/health`.
-The data, pages (monthly, daily, charts, about) and admin tools will be decided later.
+**Status (2026-10-18):** first version built. Five public tabs and an admin page:
+
+| Tab | Route | What it shows |
+|---|---|---|
+| עמוד ראשי | `/` | Current season so far vs the average to date, season average, last season, wettest/driest season, wettest day, latest reports |
+| אודות | `/about` | Short explanation (season definition, how the average is counted); text in `src/app/about/page.tsx` |
+| גרפים | `/charts` | Season totals (bars + average line), running total through the season (average, last, current, wettest, driest), average per month |
+| נתונים חודשיים | `/monthly` | Table: seasons × months (Jun–Aug, Sep … May) + total, average row, shaded cells |
+| נתונים יומיים | `/daily?season=2025` | Every rain day of a chosen season, by month, with bars and running total |
+| עדכון נתונים (admin) | `/admin` | Add/replace a day's reading (date + mm, 0 allowed), delete recent ones |
+
+Code map: `src/lib/rain.ts` reads all of `rain_daily` (paged, 1000 rows per request) and caches it (tag `rain`, 1 hour);
+saving or deleting on `/admin` clears it at once (`updateTag("rain")`). `src/lib/seasons.ts` has all the season maths
+(average = complete seasons only, current season = today's date in Israel). Charts are server-side SVG in
+`src/components/charts.tsx`, drawn twice: a compact phone version and a wide one. Login: `/login` (link in the footer),
+email + password of an existing Supabase user listed in `rain_members`.
+
+Local testing without Supabase access: `RAIN_FIXTURE=/path/to/days.json` (array of `{date, mm, season}`) makes
+`getDays()` read that file instead. Google Fonts are blocked in Claude's sandbox, so for a local `next build` stub the
+Rubik font in `layout.tsx` temporarily (never commit the stub).
 
 **Rain season = September to May.** Rain from September 2025 to May 2026 is season `25/26` (and so on, back to `70/71`).
 
@@ -102,3 +120,4 @@ New tables: prefix `rain_`, RLS on, public read (`to anon, authenticated using (
 5. Checked: `/api/health` ok, home page, admin login works.
 6. `rain_daily` created. 7. Earlier imports replaced: `rain_monthly` dropped and `rain_daily` reloaded from the single
    source file (section 4). The drop/truncate was run by Dor in the SQL editor (the connector cancels destructive SQL).
+8. App v1: five tabs + admin input (section 1), tested locally with the real data at phone and desktop width.

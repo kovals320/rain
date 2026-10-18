@@ -11,17 +11,20 @@ export function DropIcon({ className = "h-8 w-8" }: { className?: string }) {
   );
 }
 
-const tabs = [
+export const TABS = [
   { href: "/", label: "עמוד ראשי" },
-  // More tabs (monthly, daily, charts, about) will be added with the data.
+  { href: "/about", label: "אודות" },
+  { href: "/charts", label: "גרפים" },
+  { href: "/monthly", label: "נתונים חודשיים" },
+  { href: "/daily", label: "נתונים יומיים" },
 ];
 
-export async function Header({ active = "/" }: { active?: string }) {
+export async function Header({ active }: { active?: string }) {
   const { isAdmin } = await getViewer();
 
   return (
-    <header className="border-b border-line bg-card/80 backdrop-blur">
-      <div className="mx-auto w-full max-w-3xl px-4 pb-4 pt-5">
+    <header className="border-b border-line bg-card/85 backdrop-blur">
+      <div className="mx-auto w-full max-w-5xl px-4 pb-4 pt-5">
         <div className="flex items-center justify-between gap-3">
           <Link href="/" className="flex items-center gap-2.5">
             <span className="text-rain">
@@ -31,8 +34,12 @@ export async function Header({ active = "/" }: { active?: string }) {
           </Link>
           {isAdmin && (
             <div className="flex items-center gap-1 text-sm">
-              <Link href="/admin" className="rounded-full px-3 py-1.5 text-muted hover:bg-sky hover:text-ink">
-                ניהול
+              <Link
+                href="/admin"
+                aria-current={active === "/admin" ? "page" : undefined}
+                className="rounded-full px-3 py-1.5 text-muted hover:bg-sky hover:text-ink aria-[current=page]:bg-sky aria-[current=page]:text-ink"
+              >
+                עדכון נתונים
               </Link>
               <form action={signOut}>
                 <button className="rounded-full px-3 py-1.5 text-muted hover:bg-sky hover:text-ink">יציאה</button>
@@ -42,7 +49,7 @@ export async function Header({ active = "/" }: { active?: string }) {
         </div>
 
         <nav aria-label="ניווט" className="mt-4 flex flex-wrap gap-2">
-          {tabs.map((t) => {
+          {TABS.map((t) => {
             const on = t.href === active;
             return (
               <Link
@@ -51,8 +58,8 @@ export async function Header({ active = "/" }: { active?: string }) {
                 aria-current={on ? "page" : undefined}
                 className={
                   on
-                    ? "rounded-xl bg-rain px-5 py-2.5 font-medium text-white shadow-sm"
-                    : "rounded-xl bg-sky px-5 py-2.5 font-medium text-ink hover:bg-line"
+                    ? "rounded-xl bg-rain px-4 py-2.5 font-medium text-white shadow-sm sm:px-5"
+                    : "rounded-xl bg-sky px-4 py-2.5 font-medium text-ink transition-colors hover:bg-line sm:px-5"
                 }
               >
                 {t.label}
@@ -63,4 +70,31 @@ export async function Header({ active = "/" }: { active?: string }) {
       </div>
     </header>
   );
+}
+
+export async function Footer() {
+  const { user } = await getViewer();
+  return (
+    <footer className="mx-auto w-full max-w-5xl px-4 pb-8 pt-4 text-center text-sm text-muted">
+      {!user && (
+        <Link href="/login" className="underline-offset-4 hover:text-ink hover:underline">
+          כניסת מנהל
+        </Link>
+      )}
+    </footer>
+  );
+}
+
+export function Page({ active, children }: { active: string; children: React.ReactNode }) {
+  return (
+    <>
+      <Header active={active} />
+      <main className="mx-auto flex w-full max-w-5xl flex-col gap-4 px-4 py-6">{children}</main>
+      <Footer />
+    </>
+  );
+}
+
+export function Card({ className = "", children }: { className?: string; children: React.ReactNode }) {
+  return <section className={`rounded-2xl border border-line bg-card px-5 py-5 shadow-sm ${className}`}>{children}</section>;
 }
