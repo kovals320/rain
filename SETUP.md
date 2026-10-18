@@ -13,13 +13,11 @@ Anyone with the link can view; only the admin (`/login`, no sign-up) can change 
 **Status (2026-10-18):** infrastructure only. Home page with placeholder cards, admin login, empty admin page, `/api/health`.
 The data, pages (monthly, daily, charts, about) and admin tools will be decided later.
 
-**Rain season = September to May.** Rain from September 2025 to May 2026 is season `25/26` (and so on, back to `76/77`).
+**Rain season = September to May.** Rain from September 2025 to May 2026 is season `25/26` (and so on, back to `70/71`).
 
-Open questions (Dor is checking):
-- June–August rain: 8 days, 21.5 mm in total (1979-08-16 1.9, 1992-06-16 3.4, 1992-06-17 1.1, 1993-06-07 0.9,
-  1999-06-26 0.2, 2011-08-30 0.2, 2011-08-31 0.2, 2018-06-12 13.6). Leave out of season totals, add to the season
-  that ended, or add to the next one?
-- 38 months in `rain_monthly` with `needs_review = true` (daily and monthly file disagree by more than 1 mm).
+Open question (Dor is checking): June–August rain, 14 days with rain, 28.9 mm in total (1971: 1.0, 1974: 4.1, 1979: 1.9,
+1992: 4.5, 1993: 0.9, 1999: 0.2, 2011: 0.4, 2018: 13.6, 2023: 2.3). Leave out of season totals, add to the season that
+ended, or add to the next one?
 
 Stack: Next.js 16 (App Router, TypeScript), Tailwind v4, `@supabase/ssr`, font Rubik.
 
@@ -63,25 +61,15 @@ Schema in `supabase/migrations/rain_initial.sql` (applied as migration `rain_ini
 change only via SQL) and the functions `rain_is_member()` / `rain_is_admin()` for policies on future tables.
 Admin: `dor@kne.org.il` (same Supabase user as the other apps).
 
-`rain_daily` (`supabase/migrations/rain_daily.sql`): `date` (primary key) and `rainfall_mm` (numeric 5,1), one row per day with
-rain; days without a row had no rain. Public read, admin write.
-Imported 2026-10-18 from `KneRainDaily_export.csv` (columns `date`, `rainfall` only): 2,820 days, 1976-10-23 to 2026-04-01,
-total 29,295.7 mm, max 137.0 mm on 2018-12-06. Verified with an md5 over all rows (identical to the file).
-Note: no rows between 2024-05-04 and 2025-01-10 (autumn 2024 missing in the daily reports; filled from the monthly file).
+`rain_daily` (`supabase/migrations/rain_daily.sql`): `date` (primary key) and `rainfall_mm` (numeric 5,1). Public read,
+admin write. **This is the only rain data.** Monthly and season figures are calculated from it.
 
-`rain_monthly` (`supabase/migrations/rain_monthly.sql`): the final figure per month, Sep-May only, seasons 68/69 to 25/26
-(522 rows, 34,738.3 mm). Season totals come from this table. Columns: `year`, `month`, `season_start`, `rainfall_mm`,
-`source` (`daily` / `monthly` / `manual`), `needs_review`, `daily_sum_mm`, `monthly_file_mm`, `note`.
-Built 2026-10-18 by `scripts/merge_monthly.py` from the daily reports and `KneRain_export.csv` (one row per season,
-Hebrew month columns). Rules:
-1. Before Oct 1976 (68/69-75/76): monthly file.
-2. Month with no daily reports but rain in the monthly file: monthly file (autumn 2024; also 1987-09 and 2014-09, flagged).
-3. Equal or within 1 mm: sum of daily reports.
-4. Known causes, daily wins: 84/85 monthly file shifted by one month from Jan 1985; 9.7 mm on 19-20 Sep 2009 put in October.
-5. Other differences (38 months): sum of daily reports, `needs_review = true`, `note = 'to check against original records'`.
-   When Dor checks one: set `rainfall_mm`, `source = 'manual'`, `needs_review = false`.
-The monthly file's own season totals equal the sum of its months. Its 26/27 row (all zeros) was skipped.
-June-August rain (8 days) stays in `rain_daily` only, until the open question is decided.
+Single source (2026-10-18): `data_202610181746.csv` from Dor, columns `תאריך` (dd/mm/yyyy) and `ממ`, said to be the most
+up to date. 3,780 rows, 1970-08-28 to 2026-05-20, total 33,464.8 mm; 581 rows are 0 mm (days recorded with no rain) and
+are kept as they are. A day with no row simply has no report. Verified with an md5 over all rows (identical to the file).
+Seasons covered: 70/71 to 25/26 (56 seasons). Biggest day: 144.0 mm on 1973-11-12.
+Earlier imports (`KneRainDaily_export.csv`, the monthly `KneRain_export.csv` and a merged `rain_monthly` table) were
+deleted at Dor's request; do not use them.
 
 Auth: `https://rain.kneapps.fyi/**` in Authentication → URL Configuration → Redirect URLs. Never change the Site URL (shared project).
 
@@ -111,5 +99,5 @@ New tables: prefix `rain_`, RLS on, public read (`to anon, authenticated using (
 3. Vercel project `rain` (team Apps), 2 env vars (section 3), no Supabase integration.
 4. Domain `rain.kneapps.fyi`: added in Vercel, CNAME `rain` in Cloudflare (DNS only).
 5. Checked: `/api/health` ok, home page, admin login works.
-6. `rain_daily` created and filled with the daily history (section 4).
-7. `rain_monthly` created and filled by merging daily reports with the monthly file (section 4).
+6. `rain_daily` created. 7. Earlier imports replaced: `rain_monthly` dropped and `rain_daily` reloaded from the single
+   source file (section 4). The drop/truncate was run by Dor in the SQL editor (the connector cancels destructive SQL).

@@ -5,7 +5,7 @@ create table public.rain_daily (
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
-comment on table public.rain_daily is 'rain app: daily rainfall in mm, one row per day with rain. Public read, admin write.';
+comment on table public.rain_daily is 'rain app: daily rainfall in mm, daily rainfall, single source data_202610181746.csv. Public read, admin write.';
 alter table public.rain_daily enable row level security;
 create policy "rain_daily public read" on public.rain_daily
   for select to anon, authenticated using (true);
