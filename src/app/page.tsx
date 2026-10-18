@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Card, DropIcon, Page } from "@/components/Header";
+import { Hero } from "@/components/Hero";
 import { getDays } from "@/lib/rain";
 import { averageCumulative, cumulative, formatDate, formatMm, seasonDayOffset, seasonLabel, summarize, todayIL } from "@/lib/seasons";
 
@@ -48,30 +49,21 @@ export default async function Home() {
   const today = todayIL();
   const avgToDate = averageCumulative(days, sum.complete.map((s) => s.season))[seasonDayOffset(today)] ?? 0;
   const curTotal = cumulative(days, sum.current)[seasonDayOffset(today)] ?? 0;
+  const lastToDate = cumulative(days, last.season)[seasonDayOffset(today)] ?? 0;
   const recent = days.filter((d) => d.mm > 0).slice(-6).reverse();
 
   return (
     <Page active="/">
-      <Card className="bg-gradient-to-l from-card to-aqua/60">
-        <h2 className="text-muted">העונה הנוכחית ({seasonLabel(sum.current)})</h2>
-        {cur && cur.rainDays > 0 ? (
-          <>
-            <p className="mt-1 text-4xl font-bold tabular-nums text-rain">
-              {formatMm(curTotal)} <span className="text-xl font-medium">מ&quot;מ</span>
-            </p>
-            <p className="mt-1 text-ink">
-              {cur.rainDays} ימי גשם · דיווח אחרון {formatDate(cur.lastReport!)}
-            </p>
-            {avgToDate > 0 && (
-              <p className="mt-1 text-muted">
-                {pct(curTotal, avgToDate)}% מהממוצע עד היום ({formatMm(avgToDate)} מ&quot;מ) · {pct(curTotal, sum.average)}% מממוצע עונה שלמה
-              </p>
-            )}
-          </>
-        ) : (
-          <p className="mt-2 text-lg">עדיין אין דיווחים לעונה הזאת. ממוצע עד היום: {formatMm(avgToDate)} מ&quot;מ.</p>
-        )}
-      </Card>
+      <Hero
+        days={days}
+        today={today}
+        season={sum.current}
+        seasonTotal={curTotal}
+        rainDays={cur?.rainDays ?? 0}
+        lastSeasonToDate={lastToDate}
+        averageToDate={avgToDate}
+        averageSeason={sum.average}
+      />
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         <Stat

@@ -14,9 +14,9 @@ Anyone with the link can view; only the admin (`/login`, no sign-up) can change 
 
 | Tab | Route | What it shows |
 |---|---|---|
-| עמוד ראשי | `/` | Current season so far vs the average to date, season average, last season, wettest/driest season, wettest day, latest reports |
+| עמוד ראשי | `/` | Top (blue) section first: last measurement (and the rain spell it ends), season total so far, progress toward an average season with today's average marked, and comparisons with last season and the average **up to the same date**. Below: season average, last season, records, latest reports |
 | אודות | `/about` | The story of the station and of Baruch Reuveni (text from Dor, verbatim); in `src/app/about/page.tsx` |
-| גרפים | `/charts` | Season totals (bars + average line), running total through the season (average, last, current, wettest, driest), average per month |
+| גרפים | `/charts` | Seven charts, with an index at the top: season totals with a 5-season moving average; long-term trend (dots + linear trend, mm per decade, r²); decades (average + driest–wettest range); running total through the season; average per month; compare up to 3 seasons month by month (client component); heatmap of monthly rain (fixed colour bins) |
 | נתונים חודשיים | `/monthly` | Table: seasons × months (Jun–Aug, Sep … May) + total, average row, shaded cells |
 | נתונים יומיים | `/daily?season=2025` | Every rain day of a chosen season, by month, with bars and running total |
 | עדכון נתונים (admin) | `/admin` | Add/replace a day's reading (date + mm, 0 allowed), delete recent ones |

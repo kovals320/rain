@@ -21,11 +21,13 @@ export function SeasonBars({
   data,
   average,
   highlight,
+  movingAvg,
   compact,
 }: {
   data: { label: string; total: number; ongoing?: boolean }[];
   average: number;
-  highlight: { wettest: string; driest: string };
+  highlight?: { wettest: string; driest: string };
+  movingAvg?: (number | null)[];
   compact?: boolean;
 }) {
   const W = compact ? 420 : 960, H = compact ? 260 : 340, L = compact ? 36 : 48, R = compact ? 6 : 12, T = 22, B = compact ? 30 : 36;
@@ -48,7 +50,7 @@ export function SeasonBars({
       ))}
       {data.map((d, i) => {
         const x = L + i * bw;
-        const fill = d.ongoing ? C.barSoft : d.label === highlight.wettest || d.label === highlight.driest ? C.teal : C.bar;
+        const fill = d.ongoing ? C.barSoft : highlight && (d.label === highlight.wettest || d.label === highlight.driest) ? C.teal : C.bar;
         return (
           <g key={d.label}>
             <rect x={x + bw * 0.15} y={y(d.total)} width={bw * 0.7} height={Math.max(0, y(0) - y(d.total))} rx={2} fill={fill}>
@@ -69,6 +71,19 @@ export function SeasonBars({
         );
       })}
       <line x1={L} x2={W - R} y1={y(average)} y2={y(average)} stroke={C.ink} strokeWidth={1.5} strokeDasharray="6 4" />
+      {movingAvg && (
+        <polyline
+          points={movingAvg
+            .map((v, i) => (v == null ? null : `${(L + i * bw + bw / 2).toFixed(1)},${y(v).toFixed(1)}`))
+            .filter(Boolean)
+            .join(" ")}
+          fill="none"
+          stroke={C.teal}
+          strokeWidth={compact ? 2.5 : 3}
+          strokeLinejoin="round"
+          strokeLinecap="round"
+        />
+      )}
       <AvgLabel x={W - R} y={T - 6} fs={fs + 1} value={average} />
     </svg>
   );
@@ -198,5 +213,199 @@ export function Responsive({ phone, wide }: { phone: React.ReactNode; wide: Reac
       <div className="sm:hidden">{phone}</div>
       <div className="hidden sm:block">{wide}</div>
     </>
+  );
+}
+
+// Season totals as dots, with the straight trend line through them.
+export function TrendChart({
+  points,
+  trend,
+  compact,
+}: {
+  points: { season: number; label: string; total: number }[];
+  trend: { at: (x: number) => number };
+  compact?: boolean;
+}) {
+  const W = compact ? 420 : 960, H = compact ? 260 : 320, L = compact ? 36 : 48, R = compact ? 10 : 16, T = 16, B = 30;
+  const fs = compact ? 11 : 12;
+  const x0 = points[0].season, x1 = points[points.length - 1].season;
+  const max = niceMax(Math.max(...points.map((p) => p.total)), 200);
+  const x = (s: number) => L + (W - L - R) * ((s - x0) / Math.max(1, x1 - x0));
+  const y = (v: number) => T + (H - T - B) * (1 - v / max);
+  const ticks = Array.from({ length: max / 200 + 1 }, (_, i) => i * 200);
+  const step = compact ? 10 : 5;
+
+  return (
+    <svg viewBox={`0 0 ${W} ${H}`} className="h-auto w-full" role="img" aria-label="מגמת משקעים ארוכת טווח" style={{ direction: "ltr" }}>
+      {ticks.map((t) => (
+        <g key={t}>
+          <line x1={L} x2={W - R} y1={y(t)} y2={y(t)} stroke={C.grid} />
+          <text x={L - 8} y={y(t) + 4} textAnchor="end" fontSize={fs} fill={C.muted}>
+            {t}
+          </text>
+        </g>
+      ))}
+      {points
+        .filter((p) => p.season % step === 0)
+        .map((p) => (
+          <text key={p.season} x={x(p.season)} y={H - 10} textAnchor="middle" fontSize={fs} fill={C.muted}>
+            {p.label}
+          </text>
+        ))}
+      {points.map((p) => (
+        <circle key={p.season} cx={x(p.season)} cy={y(p.total)} r={compact ? 3 : 4.5} fill={C.bar} fillOpacity={0.75}>
+          <title>{`${p.label}: ${formatMm(p.total)} מ"מ`}</title>
+        </circle>
+      ))}
+      <line x1={x(x0)} x2={x(x1)} y1={y(trend.at(x0))} y2={y(trend.at(x1))} stroke={C.teal} strokeWidth={3} strokeLinecap="round" />
+    </svg>
+  );
+}
+
+// Average season per decade (bar), with the range from its driest to its wettest season (thin line).
+export function DecadeBars({
+  data,
+  compact,
+}: {
+  data: { label: string; average: number; min: number; max: number; seasons: number; minLabel: string; maxLabel: string }[];
+  compact?: boolean;
+}) {
+  const W = compact ? 420 : 960, H = compact ? 280 : 320, L = compact ? 36 : 48, R = compact ? 4 : 12, T = 24, B = compact ? 44 : 40;
+  const fs = compact ? 10.5 : 12;
+  const max = niceMax(Math.max(...data.map((d) => d.max)), 200);
+  const bw = (W - L - R) / data.length;
+  const y = (v: number) => T + (H - T - B) * (1 - v / max);
+  const ticks = Array.from({ length: max / 200 + 1 }, (_, i) => i * 200);
+
+  return (
+    <svg viewBox={`0 0 ${W} ${H}`} className="h-auto w-full" role="img" aria-label="השוואת משקעים בין עשורים" style={{ direction: "ltr" }}>
+      {ticks.map((t) => (
+        <g key={t}>
+          <line x1={L} x2={W - R} y1={y(t)} y2={y(t)} stroke={C.grid} />
+          <text x={L - 8} y={y(t) + 4} textAnchor="end" fontSize={fs} fill={C.muted}>
+            {t}
+          </text>
+        </g>
+      ))}
+      {data.map((d, i) => {
+        const cx = L + i * bw + bw / 2;
+        return (
+          <g key={d.label}>
+            <rect x={cx - bw * 0.3} y={y(d.average)} width={bw * 0.6} height={y(0) - y(d.average)} rx={4} fill={C.bar}>
+              <title>{`${d.label}: ממוצע ${formatMm(d.average)} מ"מ (${d.seasons} עונות). השחונה ${d.minLabel}: ${formatMm(d.min)}, הגשומה ${d.maxLabel}: ${formatMm(d.max)}`}</title>
+            </rect>
+            <line x1={cx} x2={cx} y1={y(d.min)} y2={y(d.max)} stroke={C.ink} strokeWidth={1.5} />
+            <line x1={cx - 6} x2={cx + 6} y1={y(d.max)} y2={y(d.max)} stroke={C.ink} strokeWidth={1.5} />
+            <line x1={cx - 6} x2={cx + 6} y1={y(d.min)} y2={y(d.min)} stroke={C.ink} strokeWidth={1.5} />
+            <rect x={cx - 17} y={y(0) - 24} width={34} height={18} rx={9} fill="#fff" />
+            <text x={cx} y={y(0) - 11} textAnchor="middle" fontSize={fs + 1} fontWeight="700" fill={C.ink}>
+              {Math.round(d.average)}
+            </text>
+            <text x={cx} y={H - B + 16} textAnchor="middle" fontSize={fs} fill={C.ink}>
+              {d.label.replace("שנות ה-", "")}
+            </text>
+            <text x={cx} y={H - B + 30} textAnchor="middle" fontSize={fs - 1} fill={C.muted} direction="rtl">
+              {`${d.seasons} עונות`}
+            </text>
+          </g>
+        );
+      })}
+    </svg>
+  );
+}
+
+// Monthly rain for every season as coloured squares. Bins are fixed so colours mean the same everywhere.
+export const HEAT_BINS = [
+  { upTo: 0, color: "#eef3f8", label: "0" },
+  { upTo: 25, color: "#cfe0f7", label: "עד 25" },
+  { upTo: 50, color: "#a3c3f2", label: "25–50" },
+  { upTo: 100, color: "#6f9de9", label: "50–100" },
+  { upTo: 150, color: "#3f74dc", label: "100–150" },
+  { upTo: 250, color: "#1d4fc4", label: "150–250" },
+  { upTo: Infinity, color: "#12337f", label: "מעל 250" },
+];
+const heatColor = (mm: number) => HEAT_BINS.find((b) => mm <= b.upTo)!.color;
+
+export function Heatmap({
+  seasons,
+  months,
+  compact,
+}: {
+  seasons: { season: number; label: string; months: Record<string, number> }[];
+  months: { key: string; label: string }[];
+  compact?: boolean;
+}) {
+  if (compact) {
+    // Phone: one row per season (newest on top), months across.
+    const rows = [...seasons].reverse();
+    const L = 44, T = 22, cw = (420 - L - 4) / months.length, ch = 12, W = 420, H = T + rows.length * ch + 4;
+    return (
+      <svg viewBox={`0 0 ${W} ${H}`} className="h-auto w-full" role="img" aria-label="מפת חום של משקעים חודשיים" style={{ direction: "ltr" }}>
+        {months.map((m, j) => (
+          <text key={m.key} x={L + j * cw + cw / 2} y={14} textAnchor="middle" fontSize={9.5} fill={C.muted}>
+            {m.label}
+          </text>
+        ))}
+        {rows.map((s, i) => (
+          <g key={s.season}>
+            {s.season % 5 === 0 && (
+              <text x={L - 6} y={T + i * ch + ch - 2.5} textAnchor="end" fontSize={9.5} fill={C.muted}>
+                {s.label}
+              </text>
+            )}
+            {months.map((m, j) => {
+              const mm = s.months[m.key] ?? 0;
+              return (
+                <rect key={m.key} x={L + j * cw + 0.5} y={T + i * ch + 0.5} width={cw - 1} height={ch - 1} fill={heatColor(mm)}>
+                  <title>{`${s.label}, ${m.label}: ${formatMm(mm)} מ"מ`}</title>
+                </rect>
+              );
+            })}
+          </g>
+        ))}
+      </svg>
+    );
+  }
+  // Wide: one column per season (oldest on the left), months down.
+  const L = 64, T = 8, R = 4, W = 960, cw = (W - L - R) / seasons.length, ch = 24, H = T + months.length * ch + 26;
+  return (
+    <svg viewBox={`0 0 ${W} ${H}`} className="h-auto w-full" role="img" aria-label="מפת חום של משקעים חודשיים" style={{ direction: "ltr" }}>
+      {months.map((m, j) => (
+        <text key={m.key} x={L - 8} y={T + j * ch + ch / 2 + 4} textAnchor="end" fontSize={12} fill={C.muted}>
+          {m.label}
+        </text>
+      ))}
+      {seasons.map((s, i) => (
+        <g key={s.season}>
+          {s.season % 5 === 0 && (
+            <text x={L + i * cw + cw / 2} y={H - 8} textAnchor="middle" fontSize={11} fill={C.muted}>
+              {s.label}
+            </text>
+          )}
+          {months.map((m, j) => {
+            const mm = s.months[m.key] ?? 0;
+            return (
+              <rect key={m.key} x={L + i * cw + 0.5} y={T + j * ch + 0.5} width={cw - 1} height={ch - 1} fill={heatColor(mm)}>
+                <title>{`${s.label}, ${m.label}: ${formatMm(mm)} מ"מ`}</title>
+              </rect>
+            );
+          })}
+        </g>
+      ))}
+    </svg>
+  );
+}
+
+export function HeatLegend() {
+  return (
+    <ul className="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm">
+      {HEAT_BINS.map((b) => (
+        <li key={b.label} className="flex items-center gap-1.5">
+          <span aria-hidden className="inline-block h-3.5 w-5 rounded-sm" style={{ backgroundColor: b.color }} />
+          {b.label}
+        </li>
+      ))}
+      <li className="text-muted">מ&quot;מ בחודש</li>
+    </ul>
   );
 }

@@ -130,3 +130,46 @@ export function averageCumulative(days: Day[], seasons: number[]) {
   for (const s of seasons) cumulative(days, s).forEach((v, i) => (sum[i] += v));
   return sum.map((v) => round1(v / Math.max(1, seasons.length)));
 }
+
+// Trailing moving average over n seasons (null until n seasons are available).
+export function movingAverage(values: number[], n: number): (number | null)[] {
+  return values.map((_, i) => (i < n - 1 ? null : round1(values.slice(i - n + 1, i + 1).reduce((a, b) => a + b, 0) / n)));
+}
+
+// Least-squares line through (season, total), with r² to show how much of the variation the trend explains.
+export function linearTrend(points: { x: number; y: number }[]) {
+  const n = points.length;
+  const mx = points.reduce((a, p) => a + p.x, 0) / n;
+  const my = points.reduce((a, p) => a + p.y, 0) / n;
+  let sxy = 0, sxx = 0, syy = 0;
+  for (const p of points) {
+    sxy += (p.x - mx) * (p.y - my);
+    sxx += (p.x - mx) ** 2;
+    syy += (p.y - my) ** 2;
+  }
+  const slope = sxy / sxx;
+  const intercept = my - slope * mx;
+  const r2 = syy > 0 ? (sxy * sxy) / (sxx * syy) : 0;
+  return { slope, intercept, r2, at: (x: number) => intercept + slope * x };
+}
+
+export type Decade = { start: number; label: string; seasons: number; average: number; min: Season; max: Season };
+
+// Seasons grouped by decade of their first year: the 70s = 70/71 … 79/80.
+export function decades(complete: Season[]): Decade[] {
+  const groups = new Map<number, Season[]>();
+  for (const s of complete) {
+    const d = Math.floor(s.season / 10) * 10;
+    groups.set(d, [...(groups.get(d) ?? []), s]);
+  }
+  return [...groups.entries()]
+    .sort((a, b) => a[0] - b[0])
+    .map(([start, list]) => ({
+      start,
+      label: start >= 2000 ? `שנות ה-${start}` : `שנות ה-${start % 100}`,
+      seasons: list.length,
+      average: round1(list.reduce((a, s) => a + s.total, 0) / list.length),
+      min: list.reduce((a, b) => (b.total < a.total ? b : a)),
+      max: list.reduce((a, b) => (b.total > a.total ? b : a)),
+    }));
+}
