@@ -15,9 +15,10 @@ The data, pages (monthly, daily, charts, about) and admin tools will be decided 
 
 **Rain season = September to May.** Rain from September 2025 to May 2026 is season `25/26` (and so on, back to `70/71`).
 
-Open question (Dor is checking): June–August rain, 15 days with rain, 28.9 mm in total (1971: 1.0, 1974: 4.1, 1979: 1.9,
-1992: 4.5, 1993: 0.9, 1999: 0.2, 2011: 0.4, 2018: 13.6, 2023: 2.3). Leave out of season totals, add to the season that
-ended, or add to the next one?
+**June–August rain counts toward the season that starts that September** (Dor's decision): June 2018 belongs to 18/19.
+So for totals a season runs June to May. `rain_daily.season_start` (a generated column) holds it: 2025 = 25/26.
+That covers 15 summer days, 28.9 mm in total (1971: 1.0, 1974: 4.1, 1979: 1.9, 1992: 4.5, 1993: 0.9, 1999: 0.2,
+2011: 0.4, 2018: 13.6, 2023: 2.3).
 
 Stack: Next.js 16 (App Router, TypeScript), Tailwind v4, `@supabase/ssr`, font Rubik.
 
@@ -67,7 +68,7 @@ admin write. **This is the only rain data.** Monthly and season figures are calc
 Single source (2026-10-18): `data_202610181746.csv` from Dor, columns `תאריך` (dd/mm/yyyy) and `ממ`, said to be the most
 up to date. 3,780 rows, 1970-08-28 to 2026-05-20, total 33,464.8 mm; 581 rows are 0 mm (days recorded with no rain) and
 are kept as they are. A day with no row simply has no report. Verified with an md5 over all rows (identical to the file).
-Seasons covered: 70/71 to 25/26 (56 seasons). Biggest day: 144.0 mm on 1973-11-12.
+Seasons covered: 70/71 to 25/26 (56 seasons); group by `season_start`. Biggest day: 144.0 mm on 1973-11-12.
 Earlier imports (`KneRainDaily_export.csv`, the monthly `KneRain_export.csv` and a merged `rain_monthly` table) were
 deleted at Dor's request; do not use them.
 
