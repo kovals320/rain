@@ -21,6 +21,11 @@ Anyone with the link can view; only the admin (`/login`, no sign-up) can change 
 | נתונים יומיים | `/daily?season=2025` | Every rain day of a chosen season, by month, with bars and running total |
 | עדכון נתונים (admin) | `/admin` | Add/replace a day's reading (date + mm, 0 allowed), delete recent ones |
 
+**Installable app (PWA):** `src/app/manifest.ts` (name, colours, icons in `public/icons/`), a minimal `public/sw.js`
+(no caching, data stays fresh), and `src/components/InstallPrompt.tsx`: a banner on phones only. Android/Chrome shows an
+"התקנה" button (browser install prompt); iPhone shows "share → הוספה למסך הבית" (iOS never prompts by itself).
+Closing the banner hides it for 30 days (localStorage). Icons were drawn from the two-drop logo; regenerate if the logo changes.
+
 Code map: `src/lib/rain.ts` reads all of `rain_daily` (paged, 1000 rows per request) and caches it (tag `rain`, 1 hour);
 saving or deleting on `/admin` clears it at once (`updateTag("rain")`). `src/lib/seasons.ts` has all the season maths
 (average = complete seasons only, current season = today's date in Israel). Charts are server-side SVG in
