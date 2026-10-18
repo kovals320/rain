@@ -25,15 +25,16 @@ export async function Header({ active }: { active?: string }) {
   return (
     <header className="border-b border-line bg-card/85 backdrop-blur">
       <div className="mx-auto w-full max-w-5xl px-4 pb-4 pt-5">
-        <div className="flex items-center justify-between gap-3">
+        {/* Title centred; for the admin, their links sit above it on a phone and at the side on larger screens */}
+        <div className="relative flex flex-col items-center gap-1 sm:min-h-10 sm:justify-center">
           <Link href="/" className="flex items-center gap-2.5">
             <span className="text-rain">
               <DropIcon />
             </span>
-            <span className="text-2xl font-bold leading-tight sm:text-3xl">משקעים ניר אליהו</span>
+            <span className="text-3xl font-bold leading-tight">משקעים ניר אליהו</span>
           </Link>
           {isAdmin && (
-            <div className="flex items-center gap-1 text-sm">
+            <div className="order-first flex items-center gap-1 self-end text-sm sm:absolute sm:left-0 sm:top-1/2 sm:order-none sm:-translate-y-1/2">
               <Link
                 href="/admin"
                 aria-current={active === "/admin" ? "page" : undefined}
