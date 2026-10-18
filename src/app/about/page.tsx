@@ -1,11 +1,22 @@
-import { Card, Page } from "@/components/Header";
+import Image from "next/image";
+import { Page } from "@/components/Header";
+import station from "../../../public/about/station.jpg";
 
 export const metadata = { title: "אודות – משקעים ניר אליהו" };
 
 export default function AboutPage() {
   return (
     <Page active="/about">
-      <Card>
+      <section className="overflow-hidden rounded-2xl border border-line bg-card shadow-sm">
+        <Image
+          src={station}
+          alt="התחנה המטאורולוגית בניר אליהו"
+          priority
+          placeholder="blur"
+          sizes="(min-width: 1024px) 1024px, 100vw"
+          className="h-auto w-full"
+        />
+        <div className="px-5 py-5">
         <h1 className="text-2xl font-bold">אודות</h1>
         <div className="mt-3 space-y-4 text-lg leading-relaxed">
           <p>
@@ -31,7 +42,8 @@ export default function AboutPage() {
           </p>
           <p className="font-bold">נתחדש!</p>
         </div>
-      </Card>
+        </div>
+      </section>
     </Page>
   );
 }
