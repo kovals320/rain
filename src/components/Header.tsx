@@ -15,8 +15,8 @@ export const TABS = [
   { href: "/", label: "עמוד ראשי" },
   { href: "/about", label: "אודות" },
   // The charts tab is turned off for now; its page is kept in src/app/_charts (not routed) for later.
-  { href: "/monthly", label: "נתונים חודשיים" },
   { href: "/daily", label: "נתונים יומיים" },
+  { href: "/monthly", label: "נתונים חודשיים" },
 ];
 
 export async function Header({ active }: { active?: string }) {
