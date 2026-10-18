@@ -15,7 +15,7 @@ Anyone with the link can view; only the admin (`/login`, no sign-up) can change 
 | Tab | Route | What it shows |
 |---|---|---|
 | עמוד ראשי | `/` | Current season so far vs the average to date, season average, last season, wettest/driest season, wettest day, latest reports |
-| אודות | `/about` | Short explanation (season definition, how the average is counted); text in `src/app/about/page.tsx` |
+| אודות | `/about` | The story of the station and of Baruch Reuveni (text from Dor, verbatim); in `src/app/about/page.tsx` |
 | גרפים | `/charts` | Season totals (bars + average line), running total through the season (average, last, current, wettest, driest), average per month |
 | נתונים חודשיים | `/monthly` | Table: seasons × months (Jun–Aug, Sep … May) + total, average row, shaded cells |
 | נתונים יומיים | `/daily?season=2025` | Every rain day of a chosen season, by month, with bars and running total |
