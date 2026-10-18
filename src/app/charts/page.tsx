@@ -155,7 +155,7 @@ export default async function ChartsPage() {
 
       <Section
         id="trend"
-        title={`מגמת משקעים ארוכת טווח (${first.label}–${lastP.label})`}
+        title={`מגמת משקעים ארוכת טווח (${first.label} עד ${lastP.label})`}
         intro={
           <>
             כל נקודה היא עונה, והקו הוא המגמה הלינארית: {perDecade === 0 ? "ללא שינוי" : `${perDecade > 0 ? "עלייה" : "ירידה"} של כ-${Math.abs(perDecade)} מ"מ בכל עשור`}
