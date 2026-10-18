@@ -90,6 +90,15 @@ Seasons covered: 70/71 to 25/26 (56 seasons); group by `season_start`. Biggest d
 Earlier imports (`KneRainDaily_export.csv`, the monthly `KneRain_export.csv` and a merged `rain_monthly` table) were
 deleted at Dor's request; do not use them.
 
+**Adding an admin** (two parts; the password never goes through the chat):
+1. Supabase → home → Authentication → Users → Add user → Create new user: their email, any temporary password,
+   tick "Auto Confirm User". (If the email already exists there, e.g. from another app, skip this step.)
+2. Add the row (dashboard SQL editor, or Claude via the connector):
+   `insert into public.rain_members (email, display_name, role) values ('name@example.com', 'שם', 'admin');` (email lowercase).
+Then the new admin opens rain.kneapps.fyi/login → "שכחתי סיסמה" → sets their own password from the email link.
+Being a user in the shared project gives no access to the other apps: each app checks its own members table.
+Remove an admin: delete the row from `rain_members` (dashboard; the connector cancels deletes).
+
 Auth: `https://rain.kneapps.fyi/**` in Authentication → URL Configuration → Redirect URLs. Never change the Site URL (shared project).
 
 New tables: prefix `rain_`, RLS on, public read (`to anon, authenticated using (true)`) and write only for
