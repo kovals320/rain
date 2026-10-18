@@ -60,7 +60,8 @@ export default async function ChartsPage() {
   const last = sum.complete[sum.complete.length - 1];
   const cur = sum.seasons.find((s) => s.season === sum.current);
   const hasCurrent = !!cur && cur.rainDays > 0;
-  const months = SEASON_MONTHS.map((k) => ({ key: String(k), label: monthLabel(k, true) }));
+  // "קיץ" (June–August) keeps the month labels short enough for phone charts.
+  const months = SEASON_MONTHS.map((k) => ({ key: String(k), label: k === "summer" ? "קיץ" : monthLabel(k, true) }));
 
   // 1. Season totals with a moving average.
   const bars = sum.seasons

@@ -103,6 +103,8 @@ New tables: prefix `rain_`, RLS on, public read (`to anon, authenticated using (
 - The site blocks crawlers, so Claude can't fetch `/api/health`; Dor opens it and pastes the result.
 - Destructive SQL through the Supabase connector may be cancelled; drop tables in the dashboard if needed.
 - Keys and passwords never go in the chat. Dor pastes them into Vercel himself.
+- Base text is 18px (`html { font-size: 112.5% }` in `globals.css`); chart labels are sized separately in the SVG code (`fs`).
+- Hebrew text with number ranges or mixed digits can reorder: wrap pure number ranges in `dir="ltr"`, and in SVG keep Hebrew words and numbers in separate `<text>` elements or set `direction="rtl"`.
 
 ## 6. Working preferences of the owner (Dor)
 

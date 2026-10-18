@@ -30,8 +30,8 @@ export function SeasonBars({
   movingAvg?: (number | null)[];
   compact?: boolean;
 }) {
-  const W = compact ? 420 : 960, H = compact ? 260 : 340, L = compact ? 36 : 48, R = compact ? 6 : 12, T = 22, B = compact ? 30 : 36;
-  const fs = compact ? 11 : 12;
+  const W = compact ? 420 : 960, H = compact ? 260 : 340, L = compact ? 42 : 52, R = compact ? 6 : 12, T = 22, B = compact ? 30 : 36;
+  const fs = compact ? 13.5 : 14;
   const every = compact ? 10 : 5;
   const max = niceMax(Math.max(...data.map((d) => d.total)), 200);
   const bw = (W - L - R) / data.length;
@@ -99,8 +99,8 @@ const MONTH_TICKS = [
 export type Line = { label: string; values: number[]; color: string; width?: number; dash?: string; upTo?: number };
 
 export function CumulativeLines({ lines, compact }: { lines: Line[]; compact?: boolean }) {
-  const W = compact ? 420 : 960, H = compact ? 280 : 360, L = compact ? 36 : 48, R = compact ? 8 : 16, T = 16, B = 32;
-  const fs = compact ? 11 : 12;
+  const W = compact ? 420 : 960, H = compact ? 280 : 360, L = compact ? 42 : 52, R = compact ? 8 : 16, T = 16, B = 32;
+  const fs = compact ? 13.5 : 14;
   const max = niceMax(Math.max(...lines.flatMap((l) => l.values.slice(0, (l.upTo ?? SEASON_LENGTH) + 1))), 200);
   const x = (i: number) => L + (W - L - R) * (i / SEASON_LENGTH);
   const y = (v: number) => T + (H - T - B) * (1 - v / max);
@@ -139,8 +139,8 @@ export function CumulativeLines({ lines, compact }: { lines: Line[]; compact?: b
 }
 
 export function MonthBars({ data, compact }: { data: { label: string; mm: number }[]; compact?: boolean }) {
-  const W = compact ? 420 : 960, H = compact ? 240 : 280, L = compact ? 32 : 48, R = compact ? 4 : 12, T = 24, B = 32;
-  const fs = compact ? 10.5 : 12;
+  const W = compact ? 420 : 960, H = compact ? 240 : 280, L = compact ? 42 : 52, R = compact ? 4 : 12, T = 24, B = 32;
+  const fs = compact ? 13 : 14;
   const max = niceMax(Math.max(...data.map((d) => d.mm)), 50);
   const bw = (W - L - R) / data.length;
   const y = (v: number) => T + (H - T - B) * (1 - v / max);
@@ -226,8 +226,8 @@ export function TrendChart({
   trend: { at: (x: number) => number };
   compact?: boolean;
 }) {
-  const W = compact ? 420 : 960, H = compact ? 260 : 320, L = compact ? 36 : 48, R = compact ? 10 : 16, T = 16, B = 30;
-  const fs = compact ? 11 : 12;
+  const W = compact ? 420 : 960, H = compact ? 260 : 320, L = compact ? 42 : 52, R = compact ? 10 : 16, T = 16, B = 30;
+  const fs = compact ? 13.5 : 14;
   const x0 = points[0].season, x1 = points[points.length - 1].season;
   const max = niceMax(Math.max(...points.map((p) => p.total)), 200);
   const x = (s: number) => L + (W - L - R) * ((s - x0) / Math.max(1, x1 - x0));
@@ -270,8 +270,8 @@ export function DecadeBars({
   data: { label: string; average: number; min: number; max: number; seasons: number; minLabel: string; maxLabel: string }[];
   compact?: boolean;
 }) {
-  const W = compact ? 420 : 960, H = compact ? 280 : 320, L = compact ? 36 : 48, R = compact ? 4 : 12, T = 24, B = compact ? 44 : 40;
-  const fs = compact ? 10.5 : 12;
+  const W = compact ? 420 : 960, H = compact ? 280 : 320, L = compact ? 42 : 52, R = compact ? 4 : 12, T = 24, B = compact ? 44 : 40;
+  const fs = compact ? 13 : 14;
   const max = niceMax(Math.max(...data.map((d) => d.max)), 200);
   const bw = (W - L - R) / data.length;
   const y = (v: number) => T + (H - T - B) * (1 - v / max);
@@ -338,18 +338,18 @@ export function Heatmap({
   if (compact) {
     // Phone: one row per season (newest on top), months across.
     const rows = [...seasons].reverse();
-    const L = 44, T = 22, cw = (420 - L - 4) / months.length, ch = 12, W = 420, H = T + rows.length * ch + 4;
+    const L = 50, T = 24, cw = (420 - L - 4) / months.length, ch = 13, W = 420, H = T + rows.length * ch + 4;
     return (
       <svg viewBox={`0 0 ${W} ${H}`} className="h-auto w-full" role="img" aria-label="מפת חום של משקעים חודשיים" style={{ direction: "ltr" }}>
         {months.map((m, j) => (
-          <text key={m.key} x={L + j * cw + cw / 2} y={14} textAnchor="middle" fontSize={9.5} fill={C.muted}>
+          <text key={m.key} x={L + j * cw + cw / 2} y={14} textAnchor="middle" fontSize={11.5} fill={C.muted}>
             {m.label}
           </text>
         ))}
         {rows.map((s, i) => (
           <g key={s.season}>
             {s.season % 5 === 0 && (
-              <text x={L - 6} y={T + i * ch + ch - 2.5} textAnchor="end" fontSize={9.5} fill={C.muted}>
+              <text x={L - 6} y={T + i * ch + ch - 2.5} textAnchor="end" fontSize={11.5} fill={C.muted}>
                 {s.label}
               </text>
             )}
@@ -367,18 +367,18 @@ export function Heatmap({
     );
   }
   // Wide: one column per season (oldest on the left), months down.
-  const L = 64, T = 8, R = 4, W = 960, cw = (W - L - R) / seasons.length, ch = 24, H = T + months.length * ch + 26;
+  const L = 72, T = 8, R = 4, W = 960, cw = (W - L - R) / seasons.length, ch = 24, H = T + months.length * ch + 26;
   return (
     <svg viewBox={`0 0 ${W} ${H}`} className="h-auto w-full" role="img" aria-label="מפת חום של משקעים חודשיים" style={{ direction: "ltr" }}>
       {months.map((m, j) => (
-        <text key={m.key} x={L - 8} y={T + j * ch + ch / 2 + 4} textAnchor="end" fontSize={12} fill={C.muted}>
+        <text key={m.key} x={L - 8} y={T + j * ch + ch / 2 + 4} textAnchor="end" fontSize={14} fill={C.muted}>
           {m.label}
         </text>
       ))}
       {seasons.map((s, i) => (
         <g key={s.season}>
           {s.season % 5 === 0 && (
-            <text x={L + i * cw + cw / 2} y={H - 8} textAnchor="middle" fontSize={11} fill={C.muted}>
+            <text x={L + i * cw + cw / 2} y={H - 8} textAnchor="middle" fontSize={13} fill={C.muted}>
               {s.label}
             </text>
           )}
@@ -402,7 +402,8 @@ export function HeatLegend() {
       {HEAT_BINS.map((b) => (
         <li key={b.label} className="flex items-center gap-1.5">
           <span aria-hidden className="inline-block h-3.5 w-5 rounded-sm" style={{ backgroundColor: b.color }} />
-          {b.label}
+          {/* Number ranges like 25–50 read left to right, or the browser shows them reversed in Hebrew text */}
+          <span dir={/^[\d–]+$/.test(b.label) ? "ltr" : undefined}>{b.label}</span>
         </li>
       ))}
       <li className="text-muted">מ&quot;מ בחודש</li>

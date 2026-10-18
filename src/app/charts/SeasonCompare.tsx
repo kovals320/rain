@@ -18,8 +18,8 @@ function Chart({
   average: Record<string, number>;
   compact?: boolean;
 }) {
-  const W = compact ? 420 : 960, H = compact ? 260 : 320, L = compact ? 34 : 48, R = compact ? 4 : 12, T = 12, B = 30;
-  const fs = compact ? 10.5 : 12;
+  const W = compact ? 420 : 960, H = compact ? 260 : 320, L = compact ? 42 : 52, R = compact ? 4 : 12, T = 12, B = 30;
+  const fs = compact ? 13 : 14;
   const top = Math.max(50, ...picked.flatMap((s) => months.map((m) => s.months[m.key] ?? 0)), ...months.map((m) => average[m.key] ?? 0));
   const step = top > 300 ? 100 : 50;
   const max = Math.ceil(top / step) * step;

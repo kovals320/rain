@@ -18,6 +18,8 @@
 }
 
 html {
+  /* Larger base text (18px instead of 16px); every rem-based size scales with it. */
+  font-size: 112.5%;
   background: var(--color-sky);
   color: var(--color-ink);
   -webkit-tap-highlight-color: transparent;
