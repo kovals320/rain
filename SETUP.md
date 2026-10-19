@@ -26,6 +26,9 @@ Anyone with the link can view; only the admin (`/login`, no sign-up) can change 
 "התקנה" button (browser install prompt); iPhone shows "share → הוספה למסך הבית" (iOS never prompts by itself).
 Closing the banner hides it for 30 days (localStorage). Icons were drawn from the two-drop logo; regenerate if the logo changes.
 
+**Visitor statistics:** Vercel Web Analytics (`<Analytics />` from `@vercel/analytics/next` in `layout.tsx`; no cookies).
+Turned on by Dor in Vercel → project `rain` → Analytics → Enable. Numbers are in that tab.
+
 Code map: `src/lib/rain.ts` reads all of `rain_daily` (paged, 1000 rows per request) and caches it (tag `rain`, 1 hour);
 saving or deleting on `/admin` clears it at once (`updateTag("rain")`). `src/lib/seasons.ts` has all the season maths
 (average = complete seasons only, current season = today's date in Israel). Charts are server-side SVG in

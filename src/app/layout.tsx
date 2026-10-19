@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Rubik } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 import { InstallPrompt } from "@/components/InstallPrompt";
 import "./globals.css";
 
@@ -36,6 +37,8 @@ export default function RootLayout({
       <body className="min-h-dvh text-ink antialiased">
         {children}
         <InstallPrompt />
+        {/* Visitor statistics (Vercel Web Analytics: no cookies, nothing personal). Shown in Vercel → rain → Analytics. */}
+        <Analytics />
       </body>
     </html>
   );
