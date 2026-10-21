@@ -111,6 +111,11 @@ Auth: `https://rain.kneapps.fyi/**` in Authentication → URL Configuration → 
 
 New tables: prefix `rain_`, RLS on, public read (`to anon, authenticated using (true)`) and write only for
 `public.rain_is_admin()`, the same pattern as the media apps.
+**From 2026-10-30 Supabase no longer grants Data API access to new `public` tables automatically.** Every new table
+needs explicit grants in the same migration, or the app gets "permission denied":
+`grant select on public.X to anon; grant select, insert, update, delete on public.X to authenticated, service_role;`
+(Tables that existed before that date keep their grants: `rain_daily` and `rain_members` were checked on 2026-10-21.)
+This applies to all of Dor's apps in the shared `home` project.
 
 ## 5. Gotchas (shared with the other apps)
 

@@ -12,6 +12,11 @@ create policy "rain_daily public read" on public.rain_daily
 create policy "rain_daily managed by admins" on public.rain_daily
   for all to authenticated using (public.rain_is_admin()) with check (public.rain_is_admin());
 
+-- Explicit Data API grants (required for tables created from 2026-10-30; RLS still decides what each role can do).
+grant select on public.rain_daily to anon;
+grant select, insert, update, delete on public.rain_daily to authenticated;
+grant select, insert, update, delete on public.rain_daily to service_role;
+
 -- Season of each day (applied as migration rain_daily_season): June-May, named by its September.
 -- Jun-Aug rain counts toward the season that starts that September (Dor's decision, 2026-10-18).
 alter table public.rain_daily

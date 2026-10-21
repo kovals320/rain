@@ -29,3 +29,7 @@ create policy "rain_members read by members" on public.rain_members
   for select to authenticated using (public.rain_is_member());
 create policy "rain_members locked" on public.rain_members
   for all to authenticated using (false) with check (false);
+
+-- Explicit Data API grants (required for tables created from 2026-10-30; RLS still decides what each role can see/do).
+grant select on public.rain_members to authenticated;
+grant select, insert, update, delete on public.rain_members to service_role;
