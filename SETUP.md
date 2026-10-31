@@ -1,5 +1,10 @@
 # How the rain app is built
 
+> **2026-10-31: this site has moved.** The rain app is now the "משקעים" section of the kibbutz app
+> (`app.kneapps.fyi/rain`, repo `kovals320/kne`, see its SETUP.md). This site only forwards there
+> (`next.config.ts` redirects: `/`, `/about`, `/daily`, `/monthly`, `/admin` → the same page under `/rain`,
+> anything else → `/rain`). The data (`rain_daily`) is the same table. Make changes in the `kne` repo, not here.
+
 A record of the `rain.kneapps.fyi` project, so a new conversation (or a new person) can continue without the original chat.
 
 > **Starting a new conversation with this file:** read sections 6 (how Dor likes to work), 5 (gotchas) and 2 (accounts).
